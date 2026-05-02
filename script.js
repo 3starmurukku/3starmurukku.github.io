@@ -1,5 +1,33 @@
+// Quick theme apply before DOM fully loads to prevent flash
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
 document.addEventListener('DOMContentLoaded', () => {
     
+    // ===== Theme Toggle Logic =====
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = themeToggleBtn?.querySelector('i');
+    
+    if (themeToggleBtn && themeIcon) {
+        if (savedTheme === 'dark') {
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+        
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            if (newTheme === 'dark') {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+    }
+
     // ===== 1. Sticky Header =====
     const header = document.getElementById('header');
     
@@ -236,6 +264,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             animate();
         }
+    }
+
+    // ===== 6. Craving Inducing Floating Crumbs =====
+    const heroWrapper = document.querySelector('.hero-image-wrapper');
+    if (heroWrapper) {
+        const createCrumb = () => {
+            const crumb = document.createElement('div');
+            crumb.classList.add('crumb');
+            
+            const size = Math.random() * 4 + 2;
+            crumb.style.width = `${size}px`;
+            crumb.style.height = `${size}px`;
+            
+            crumb.style.left = `${Math.random() * 100}%`;
+            crumb.style.bottom = `${Math.random() * 30}%`;
+            
+            const colors = ['#D97706', '#B45309', '#F59E0B', '#92400E'];
+            crumb.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            const duration = Math.random() * 4 + 3;
+            crumb.style.animationDuration = `${duration}s`;
+            crumb.style.animationDelay = `${Math.random() * 2}s`;
+            
+            heroWrapper.appendChild(crumb);
+            
+            setTimeout(() => {
+                crumb.remove();
+            }, duration * 1000 + 2000);
+        };
+
+        for(let i=0; i<15; i++) {
+            setTimeout(createCrumb, Math.random() * 2000);
+        }
+        setInterval(createCrumb, 400);
     }
 
     // ===== 5. Contact Form AJAX Submission =====
